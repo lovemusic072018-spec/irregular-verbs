@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Irregular Verbs Test ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #34495e;
+            --text-light: #7f8c8d;
+            --primary: #8e44ad;
+            --primary-hover: #9b59b6;
+            --correct: #2ecc71;
+            --wrong: #e74c3c;
+            --locked-bg: #f8f9fa;
+            --locked-border: #dcdde1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        .app-container {
+            background: var(--card-bg);
+            border-radius: 28px;
+            padding: 35px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .screen {
+            display: none;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Pulsanti */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.3);
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(142, 68, 173, 0.4);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .btn-large {
+            width: 100%;
+            margin-top: 25px;
+            padding: 18px;
+            font-size: 18px;
+        }
+
+        /* UI Quiz */
+        .progress-bar-bg {
+            background: #ecf0f1;
+            height: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+
+        .q-counter {
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 25px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .inputs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media(max-width: 480px) {
+            .inputs-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .verb-field {
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            border: 2px solid transparent;
+            width: 100%;
+        }
+
+        .verb-field.given {
+            background: var(--locked-bg);
+            border-color: var(--locked-border);
+            color: var(--primary);
+            text-transform: uppercase;
+            cursor: not-allowed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 56px; /* Uguale all'input */
+        }
+
+        input.verb-field {
+            background: white;
+            border-color: #bdc3c7;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.3s;
+            text-transform: lowercase;
+        }
+
+        input.verb-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(142, 68, 173, 0.15);
+        }
+
+        /* Risultati */
+        .score-circle {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 42px;
+            font-weight: 800;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 10px 25px rgba(142, 68, 173, 0.4);
+        }
+
+        .vote-message {
+            font-weight: 800;
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+
+        .results-list {
+            max-height: 350px;
+            overflow-y: auto;
+            text-align: left;
+            padding-right: 10px;
+        }
+
+        /* Scrollbar carina */
+        .results-list::-webkit-scrollbar { width: 6px; }
+        .results-list::-webkit-scrollbar-track { background: transparent; }
+        .results-list::-webkit-scrollbar-thumb { background: #bdc3c7; border-radius: 10px; }
+
+        .result-card {
+            background: white;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid #ccc;
+        }
+
+        .result-card.perfect { border-left-color: var(--correct); }
+        .result-card.errors { border-left-color: var(--wrong); }
+
+        .res-header {
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 12px;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .res-status {
+            font-size: 13px;
+        }
+
+        .res-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .res-item {
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .res-label {
+            font-size: 11px;
+            color: var(--text-light);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .res-val {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .res-err {
+            color: var(--wrong);
+            text-decoration: line-through;
+            font-size: 12px;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- START SCREEN -->
+        <div id="start-screen" class="screen active">
+            <h1>Verbi Irregolari 🇬🇧</h1>
+            <p>Ti verrà fornita <strong>una sola forma</strong> del verbo (Base, Passato, Participio o Traduzione).<br>Completa le altre tre per fare punto!</p>
+            <div style="margin-top: 30px;">
+                <div style="font-size: 14px; font-weight: 700; margin-bottom: 15px; color: var(--text-light);">Scegli la difficoltà:</div>
+                <div class="btn-group">
+                    <button onclick="startQuiz(10)">10 Verbi</button>
+                    <button onclick="startQuiz(15)">15 Verbi</button>
+                    <button onclick="startQuiz(17)">Tutti (17)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUIZ SCREEN -->
+        <div id="quiz-screen" class="screen">
+            <div class="progress-bar-bg"><div id="progress-fill" class="progress-fill"></div></div>
+            <div class="q-counter" id="q-counter">Domanda 1 / 10</div>
+            
+            <div class="inputs-grid" id="inputs-container">
+                <!-- Generato dinamicamente da JS -->
+            </div>
+
+            <button class="btn-large" onclick="submitAnswer()">Conferma</button>
+            <div style="font-size: 12px; color: var(--text-light); margin-top: 15px; font-weight: 600;">Puoi premere "Invio" per confermare</div>
+        </div>
+
+        <!-- RESULT SCREEN -->
+        <div id="result-screen" class="screen">
+            <h1>Risultati 🎉</h1>
+            <div class="score-circle" id="score-text">0/10</div>
+            <div class="vote-message" id="vote-message"></div>
+            
+            <div class="results-list" id="results-list"></div>
+            
+            <button class="btn-large" onclick="resetQuiz()">Torna alla Home 🔄</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Database dei verbi estrapolati dalla foto
+        const dbVerbs = [
+            // Senza cambi
+            { base: "bet", past: "bet", part: "bet", it: "scommettere" },
+            { base: "cost", past: "cost", part: "cost", it: "costare" },
+            { base: "cut", past: "cut", part: "cut", it: "tagliare" },
+            { base: "hit", past: "hit", part: "hit", it: "colpire" },
+            { base: "hurt", past: "hurt", part: "hurt", it: "ferire" },
+            { base: "let", past: "let", part: "let", it: "lasciare / permettere" },
+            { base: "put", past: "put", part: "put", it: "mettere" },
+            { base: "set", past: "set", part: "set", it: "impostare" },
+            { base: "shut", past: "shut", part: "shut", it: "chiudere" },
+            // Con 1 cambio
+            { base: "babysit", past: "babysat", part: "babysat", it: "fare la babysitter" },
+            { base: "bring", past: "brought", part: "brought", it: "portare" },
+            { base: "build", past: "built", part: "built", it: "costruire" },
+            { base: "burn", past: "burnt", part: "burnt", it: "bruciare" },
+            { base: "buy", past: "bought", part: "bought", it: "comprare" },
+            { base: "catch", past: "caught", part: "caught", it: "prendere" },
+            { base: "dream", past: "dreamt", part: "dreamt", it: "sognare" },
+            { base: "feed", past: "fed", part: "fed", it: "dare da mangiare" }
+        ];
+
+        const formKeys = [
+            { key: "base", label: "Base Form" },
+            { key: "past", label: "Past Simple" },
+            { key: "part", label: "Participle" },
+            { key: "it", label: "Traduzione" }
+        ];
+
+        let currentQuizList = [];
+        let currentIndex = 0;
+        let currentGivenKey = "";
+        let results = [];
+        let score = 0;
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function startQuiz(numQuestions) {
+            const shuffled = shuffle([...dbVerbs]);
+            currentQuizList = shuffled.slice(0, numQuestions);
+            currentIndex = 0;
+            score = 0;
+            results = [];
+            showScreen('quiz-screen');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const total = currentQuizList.length;
+            document.getElementById('q-counter').innerText = `Domanda ${currentIndex + 1} di ${total}`;
+            document.getElementById('progress-fill').style.width = `${(currentIndex / total) * 100}%`;
+
+            const currentVerb = currentQuizList[currentIndex];
+            
+            // Seleziona casualmente quale forma fornire (base, past, part, it)
+            currentGivenKey = formKeys[Math.floor(Math.random() * formKeys.length)].key;
+
+            const container = document.getElementById('inputs-container');
+            container.innerHTML = '';
+
+            formKeys.forEach(f => {
+                const group = document.createElement('div');
+                group.className = 'input-group';
+                
+                const label = document.createElement('label');
+                label.innerText = f.label;
+                group.appendChild(label);
+
+                if (f.key === currentGivenKey) {
+                    const lockedDiv = document.createElement('div');
+                    lockedDiv.className = 'verb-field given';
+                    lockedDiv.innerText = currentVerb[f.key];
+                    group.appendChild(lockedDiv);
+                } else {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.className = 'verb-field user-input';
+                    input.id = `input-${f.key}`;
+                    input.placeholder = "Scrivi qui...";
+                    input.autocomplete = "off";
+                    group.appendChild(input);
+                }
+                
+                container.appendChild(group);
+            });
+
+            // Auto-focus sul primo input disponibile
+            setTimeout(() => {
+                const firstInput = document.querySelector('input.user-input');
+                if (firstInput) firstInput.focus();
+            }, 100);
+        }
+
+        function normalizeString(str) {
+            return str.toLowerCase().trim().replace(/\s+/g, ' ');
+        }
+
+        // Controllo elastico delle risposte (specialmente per le doppie traduzioni)
+        function checkMatch(userTyped, correctValue) {
+            const u = normalizeString(userTyped);
+            const c = normalizeString(correctValue);
+            
+            if (u === c) return true;
+            
+            // Gestione dei sinonimi o traduzioni doppie (es. "lasciare / permettere")
+            if (c.includes('/')) {
+                const parts = c.split('/').map(p => p.trim());
+                if (parts.includes(u)) return true; // Ha scritto solo una delle due
+                if (u === parts.join(' e ') || u === parts.join(' o ') || u === parts.join('/')) return true;
+            }
+            return false;
+        }
+
+        function submitAnswer() {
+            const currentVerb = currentQuizList[currentIndex];
+            let isPerfect = true;
+            const answerData = {};
+
+            formKeys.forEach(f => {
+                if (f.key === currentGivenKey) {
+                    answerData[f.key] = { expected: currentVerb[f.key], user: currentVerb[f.key], isCorrect: true };
+                } else {
+                    const inputVal = document.getElementById(`input-${f.key}`).value;
+                    const correct = checkMatch(inputVal, currentVerb[f.key]);
+                    if (!correct) isPerfect = false;
+                    answerData[f.key] = { expected: currentVerb[f.key], user: inputVal, isCorrect: correct };
+                }
+            });
+
+            if (isPerfect) score++;
+
+            results.push({
+                verb: currentVerb,
+                isPerfect: isPerfect,
+                details: answerData
+            });
+
+            currentIndex++;
+            if (currentIndex < currentQuizList.length) {
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('progress-fill').style.width = '100%';
+            setTimeout(() => {
+                showScreen('result-screen');
+                buildResultsUI();
+            }, 300);
+        }
+
+        function buildResultsUI() {
+            const total = currentQuizList.length;
+            const scoreDisplay = document.getElementById('score-text');
+            scoreDisplay.innerText = `${score}/${total}`;
+            
+            const perc = score / total;
+            const msgEl = document.getElementById('vote-message');
+            
+            if (perc === 1) { msgEl.innerText = "Percorso Netto! Eccellente 🏆"; scoreDisplay.style.background = "var(--correct)"; msgEl.style.color = "var(--correct)"; }
+            else if (perc >= 0.7) { msgEl.innerText = "Ottimo lavoro! 🌟"; scoreDisplay.style.background = "var(--primary)"; msgEl.style.color = "var(--primary)"; }
+            else if (perc >= 0.5) { msgEl.innerText = "Sufficiente, puoi fare di meglio! 👍"; scoreDisplay.style.background = "#f39c12"; msgEl.style.color = "#f39c12"; }
+            else { msgEl.innerText = "Devi ripassare un po'! 📚"; scoreDisplay.style.background = "var(--wrong)"; msgEl.style.color = "var(--wrong)"; }
+
+            const listContainer = document.getElementById('results-list');
+            listContainer.innerHTML = '';
+
+            results.forEach((res, index) => {
+                const card = document.createElement('div');
+                card.className = `result-card ${res.isPerfect ? 'perfect' : 'errors'}`;
+                
+                const header = document.createElement('div');
+                header.className = 'res-header';
+                header.innerHTML = `
+                    <span>Verbo ${index + 1}</span>
+                    <span class="res-status">${res.isPerfect ? '✅ Esatto' : '❌ Errori presenti'}</span>
+                `;
+                card.appendChild(header);
+
+                const grid = document.createElement('div');
+                grid.className = 'res-grid';
+
+                formKeys.forEach(f => {
+                    const d = res.details[f.key];
+                    const item = document.createElement('div');
+                    item.className = 'res-item';
+                    
+                    const color = d.isCorrect ? 'var(--correct)' : 'var(--wrong)';
+                    const userWrongStr = d.user.trim() === '' ? '(vuoto)' : d.user;
+                    
+                    const errHTML = !d.isCorrect ? `<div class="res-err">${userWrongStr}</div>` : '';
+                    
+                    item.innerHTML = `
+                        <div class="res-label">${f.label}</div>
+                        <div class="res-val" style="color: ${color}">${d.expected}</div>
+                        ${errHTML}
+                    `;
+                    grid.appendChild(item);
+                });
+
+                card.appendChild(grid);
+                listContainer.appendChild(card);
+            });
+        }
+
+        function resetQuiz() {
+            showScreen('start-screen');
+        }
+
+        // Tasto invio
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('quiz-screen').classList.contains('active')) {
+                submitAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
