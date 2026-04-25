@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -187,7 +188,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 56px; /* Uguale all'input */
+            min-height: 56px; 
         }
 
         input.verb-field {
@@ -233,7 +234,6 @@
             padding-right: 10px;
         }
 
-        /* Scrollbar carina */
         .results-list::-webkit-scrollbar { width: 6px; }
         .results-list::-webkit-scrollbar-track { background: transparent; }
         .results-list::-webkit-scrollbar-thumb { background: #bdc3c7; border-radius: 10px; }
@@ -312,8 +312,8 @@
                 <div style="font-size: 14px; font-weight: 700; margin-bottom: 15px; color: var(--text-light);">Scegli la difficoltà:</div>
                 <div class="btn-group">
                     <button onclick="startQuiz(10)">10 Verbi</button>
-                    <button onclick="startQuiz(15)">15 Verbi</button>
-                    <button onclick="startQuiz(17)">Tutti (17)</button>
+                    <button onclick="startQuiz(20)">20 Verbi</button>
+                    <button onclick="startQuiz(49)">Tutti (49)</button>
                 </div>
             </div>
         </div>
@@ -345,9 +345,9 @@
     </div>
 
     <script>
-        // Database dei verbi estrapolati dalla foto
+        // Database completo dei verbi estrapolati dagli appunti
         const dbVerbs = [
-            // Senza cambi
+            // Senza cambi (9 verbi)
             { base: "bet", past: "bet", part: "bet", it: "scommettere" },
             { base: "cost", past: "cost", part: "cost", it: "costare" },
             { base: "cut", past: "cut", part: "cut", it: "tagliare" },
@@ -357,7 +357,8 @@
             { base: "put", past: "put", part: "put", it: "mettere" },
             { base: "set", past: "set", part: "set", it: "impostare" },
             { base: "shut", past: "shut", part: "shut", it: "chiudere" },
-            // Con 1 cambio
+            
+            // Con 1 cambio (40 verbi)
             { base: "babysit", past: "babysat", part: "babysat", it: "fare la babysitter" },
             { base: "bring", past: "brought", part: "brought", it: "portare" },
             { base: "build", past: "built", part: "built", it: "costruire" },
@@ -365,7 +366,39 @@
             { base: "buy", past: "bought", part: "bought", it: "comprare" },
             { base: "catch", past: "caught", part: "caught", it: "prendere" },
             { base: "dream", past: "dreamt", part: "dreamt", it: "sognare" },
-            { base: "feed", past: "fed", part: "fed", it: "dare da mangiare" }
+            { base: "feed", past: "fed", part: "fed", it: "dare da mangiare" },
+            { base: "feel", past: "felt", part: "felt", it: "provare" },
+            { base: "fight", past: "fought", part: "fought", it: "combattere" },
+            { base: "find", past: "found", part: "found", it: "trovare" },
+            { base: "get", past: "got", part: "got", it: "prendere" },
+            { base: "hang", past: "hung", part: "hung", it: "appendere" },
+            { base: "have", past: "had", part: "had", it: "avere" },
+            { base: "hear", past: "heard", part: "heard", it: "ascoltare" },
+            { base: "hold", past: "held", part: "held", it: "tenere" },
+            { base: "keep", past: "kept", part: "kept", it: "mantenere" },
+            { base: "learn", past: "learnt", part: "learnt", it: "imparare" },
+            { base: "leave", past: "left", part: "left", it: "andare via" },
+            { base: "lend", past: "lent", part: "lent", it: "prestare" },
+            { base: "lose", past: "lost", part: "lost", it: "perdere" },
+            { base: "make", past: "made", part: "made", it: "fare" },
+            { base: "mean", past: "meant", part: "meant", it: "significare" },
+            { base: "meet", past: "met", part: "met", it: "incontrare" },
+            { base: "oversleep", past: "overslept", part: "overslept", it: "dormire troppo" },
+            { base: "pay", past: "paid", part: "paid", it: "pagare" },
+            { base: "read", past: "read", part: "read", it: "leggere" },
+            { base: "say", past: "said", part: "said", it: "dire" },
+            { base: "sell", past: "sold", part: "sold", it: "vendere" },
+            { base: "send", past: "sent", part: "sent", it: "inviare" },
+            { base: "shine", past: "shone", part: "shone", it: "splendere" },
+            { base: "sit", past: "sat", part: "sat", it: "sedersi" },
+            { base: "sleep", past: "slept", part: "slept", it: "dormire" },
+            { base: "spell", past: "spelt / spelled", part: "spelt / spelled", it: "pronunciare" },
+            { base: "spend", past: "spent", part: "spent", it: "spendere" },
+            { base: "stand", past: "stood", part: "stood", it: "stare in piedi" },
+            { base: "tell", past: "told", part: "told", it: "raccontare" },
+            { base: "think", past: "thought", part: "thought", it: "pensare" },
+            { base: "understand", past: "understood", part: "understood", it: "capire" },
+            { base: "win", past: "won", part: "won", it: "vincere" }
         ];
 
         const formKeys = [
@@ -413,7 +446,7 @@
 
             const currentVerb = currentQuizList[currentIndex];
             
-            // Seleziona casualmente quale forma fornire (base, past, part, it)
+            // Seleziona casualmente quale forma fornire
             currentGivenKey = formKeys[Math.floor(Math.random() * formKeys.length)].key;
 
             const container = document.getElementById('inputs-container');
@@ -445,7 +478,6 @@
                 container.appendChild(group);
             });
 
-            // Auto-focus sul primo input disponibile
             setTimeout(() => {
                 const firstInput = document.querySelector('input.user-input');
                 if (firstInput) firstInput.focus();
@@ -456,17 +488,16 @@
             return str.toLowerCase().trim().replace(/\s+/g, ' ');
         }
 
-        // Controllo elastico delle risposte (specialmente per le doppie traduzioni)
         function checkMatch(userTyped, correctValue) {
             const u = normalizeString(userTyped);
             const c = normalizeString(correctValue);
             
             if (u === c) return true;
             
-            // Gestione dei sinonimi o traduzioni doppie (es. "lasciare / permettere")
+            // Gestione dei sinonimi o risposte doppie (es. "lasciare / permettere" o "spelt / spelled")
             if (c.includes('/')) {
                 const parts = c.split('/').map(p => p.trim());
-                if (parts.includes(u)) return true; // Ha scritto solo una delle due
+                if (parts.includes(u)) return true;
                 if (u === parts.join(' e ') || u === parts.join(' o ') || u === parts.join('/')) return true;
             }
             return false;
@@ -522,60 +553,4 @@
             
             if (perc === 1) { msgEl.innerText = "Percorso Netto! Eccellente 🏆"; scoreDisplay.style.background = "var(--correct)"; msgEl.style.color = "var(--correct)"; }
             else if (perc >= 0.7) { msgEl.innerText = "Ottimo lavoro! 🌟"; scoreDisplay.style.background = "var(--primary)"; msgEl.style.color = "var(--primary)"; }
-            else if (perc >= 0.5) { msgEl.innerText = "Sufficiente, puoi fare di meglio! 👍"; scoreDisplay.style.background = "#f39c12"; msgEl.style.color = "#f39c12"; }
-            else { msgEl.innerText = "Devi ripassare un po'! 📚"; scoreDisplay.style.background = "var(--wrong)"; msgEl.style.color = "var(--wrong)"; }
-
-            const listContainer = document.getElementById('results-list');
-            listContainer.innerHTML = '';
-
-            results.forEach((res, index) => {
-                const card = document.createElement('div');
-                card.className = `result-card ${res.isPerfect ? 'perfect' : 'errors'}`;
-                
-                const header = document.createElement('div');
-                header.className = 'res-header';
-                header.innerHTML = `
-                    <span>Verbo ${index + 1}</span>
-                    <span class="res-status">${res.isPerfect ? '✅ Esatto' : '❌ Errori presenti'}</span>
-                `;
-                card.appendChild(header);
-
-                const grid = document.createElement('div');
-                grid.className = 'res-grid';
-
-                formKeys.forEach(f => {
-                    const d = res.details[f.key];
-                    const item = document.createElement('div');
-                    item.className = 'res-item';
-                    
-                    const color = d.isCorrect ? 'var(--correct)' : 'var(--wrong)';
-                    const userWrongStr = d.user.trim() === '' ? '(vuoto)' : d.user;
-                    
-                    const errHTML = !d.isCorrect ? `<div class="res-err">${userWrongStr}</div>` : '';
-                    
-                    item.innerHTML = `
-                        <div class="res-label">${f.label}</div>
-                        <div class="res-val" style="color: ${color}">${d.expected}</div>
-                        ${errHTML}
-                    `;
-                    grid.appendChild(item);
-                });
-
-                card.appendChild(grid);
-                listContainer.appendChild(card);
-            });
-        }
-
-        function resetQuiz() {
-            showScreen('start-screen');
-        }
-
-        // Tasto invio
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && document.getElementById('quiz-screen').classList.contains('active')) {
-                submitAnswer();
-            }
-        });
-    </script>
-</body>
-</html>
+            else if (perc >= 0.5) { msgEl.innerText = "Sufficiente, puoi fare di meglio! 👍"; scoreDisplay.style.background = "#f39c12"; msgEl.style.color = "#f39
