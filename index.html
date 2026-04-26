@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -553,4 +552,60 @@
             
             if (perc === 1) { msgEl.innerText = "Percorso Netto! Eccellente 🏆"; scoreDisplay.style.background = "var(--correct)"; msgEl.style.color = "var(--correct)"; }
             else if (perc >= 0.7) { msgEl.innerText = "Ottimo lavoro! 🌟"; scoreDisplay.style.background = "var(--primary)"; msgEl.style.color = "var(--primary)"; }
-            else if (perc >= 0.5) { msgEl.innerText = "Sufficiente, puoi fare di meglio! 👍"; scoreDisplay.style.background = "#f39c12"; msgEl.style.color = "#f39
+            else if (perc >= 0.5) { msgEl.innerText = "Sufficiente, puoi fare di meglio! 👍"; scoreDisplay.style.background = "#f39c12"; msgEl.style.color = "#f39c12"; }
+            else { msgEl.innerText = "Devi ripassare un po'! 📚"; scoreDisplay.style.background = "var(--wrong)"; msgEl.style.color = "var(--wrong)"; }
+
+            const listContainer = document.getElementById('results-list');
+            listContainer.innerHTML = '';
+
+            results.forEach((res, index) => {
+                const card = document.createElement('div');
+                card.className = `result-card ${res.isPerfect ? 'perfect' : 'errors'}`;
+                
+                const header = document.createElement('div');
+                header.className = 'res-header';
+                header.innerHTML = `
+                    <span>Verbo ${index + 1}</span>
+                    <span class="res-status">${res.isPerfect ? '✅ Esatto' : '❌ Errori presenti'}</span>
+                `;
+                card.appendChild(header);
+
+                const grid = document.createElement('div');
+                grid.className = 'res-grid';
+
+                formKeys.forEach(f => {
+                    const d = res.details[f.key];
+                    const item = document.createElement('div');
+                    item.className = 'res-item';
+                    
+                    const color = d.isCorrect ? 'var(--correct)' : 'var(--wrong)';
+                    const userWrongStr = d.user.trim() === '' ? '(vuoto)' : d.user;
+                    
+                    const errHTML = !d.isCorrect ? `<div class="res-err">${userWrongStr}</div>` : '';
+                    
+                    item.innerHTML = `
+                        <div class="res-label">${f.label}</div>
+                        <div class="res-val" style="color: ${color}">${d.expected}</div>
+                        ${errHTML}
+                    `;
+                    grid.appendChild(item);
+                });
+
+                card.appendChild(grid);
+                listContainer.appendChild(card);
+            });
+        }
+
+        function resetQuiz() {
+            showScreen('start-screen');
+        }
+
+        // Tasto invio per passare alla prossima domanda in modo comodo
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && document.getElementById('quiz-screen').classList.contains('active')) {
+                submitAnswer();
+            }
+        });
+    </script>
+</body>
+</html>
